@@ -1,0 +1,135 @@
+import java.util.*;
+class HangmanGame {
+    public static final String[] COUNTRIES = {
+            "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
+            "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain",
+            "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+            "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria",
+            "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada",
+            "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros",
+            "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
+            "Democratic Republic of the Congo", "Denmark",
+            "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador",
+            "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini (fmr. Swaziland)", "Ethiopia",
+            "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana",
+            "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti",
+            "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq",
+            "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya",
+            "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho",
+            "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar",
+            "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania",
+            "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro",
+            "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal",
+            "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
+            "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine State",
+            "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland",
+            "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis",
+            "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino",
+            "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles",
+            "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia",
+            "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan",
+            "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand",
+            "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey",
+            "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates",
+            "United Kingdom", "Uruguay", "Uzbekistan", "Vanuatu",
+            "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe", "USA", "UK", "UAE"
+    };
+
+    static void drawHangman(int incorrectGuesses) {
+        System.out.println("  _______");
+
+        if (incorrectGuesses >= 1)
+            System.out.println(" |/      |");
+        else
+            System.out.println(" |/");
+
+
+        if (incorrectGuesses >= 2)
+            System.out.println(" |      ( )");
+        else
+            System.out.println(" |");
+
+
+        if (incorrectGuesses >= 5)
+            System.out.println(" |      " + (incorrectGuesses >= 5 ? "/" : "") + (incorrectGuesses >= 3 ? "|" : "") + (incorrectGuesses >= 6 ? "\\" : ""));
+        else if (incorrectGuesses >= 4)
+            System.out.println(" |      " + (incorrectGuesses >= 4 ? "/" : "") + (incorrectGuesses >= 3 ? "|" : ""));
+         else if (incorrectGuesses >= 3)
+            System.out.println(" |      " + (incorrectGuesses >= 3 ? "|" : ""));
+        else
+            System.out.println(" |");
+
+
+        if (incorrectGuesses >= 7)
+            System.out.println(" |      " + (incorrectGuesses >= 7 ? "/" : "") + " " + (incorrectGuesses >= 8 ? "\\" : ""));
+        else if (incorrectGuesses >= 6)
+            System.out.println(" |      " + (incorrectGuesses >= 6 ? "/" : ""));
+        else
+            System.out.println(" |");
+
+        System.out.println("_|___");
+    }
+
+    static final int MAX_INCORRECT_GUESSES = 8;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("--------WELCOME TO HANGMAN GAME--------");
+
+        String country = COUNTRIES[(int) (Math.random() * COUNTRIES.length)].toUpperCase();
+
+        char[] guessedWord = new char[country.length()];
+        Arrays.fill(guessedWord, '_');
+
+        int incorrectGuesses = 0;
+
+        while (incorrectGuesses < MAX_INCORRECT_GUESSES && String.valueOf(guessedWord).contains("_")) {
+
+            System.out.print("Country: ");
+            for (int i = 0; i < guessedWord.length; i++)
+                System.out.print(guessedWord[i] + " ");
+
+            System.out.println();
+
+            drawHangman(incorrectGuesses);
+
+            System.out.print("Guess a letter: ");
+            String input = sc.nextLine().toUpperCase();
+
+            if (input.length() != 1 || !Character.isLetter(input.charAt(0))) {
+                System.out.println("Invalid input. Please enter a single letter.");
+                continue;
+            }
+
+            char guess = input.charAt(0);
+
+            boolean found = false;
+            for (int i = 0; i < country.length(); i++) {
+                if (country.charAt(i) == guess) {
+                    if (guessedWord[i] == '_') {
+                        guessedWord[i] = guess;
+                        found = true;
+                    }
+                }
+            }
+
+            if (!found) {
+                System.out.println("Incorrect guess!");
+                incorrectGuesses++;
+            } else {
+                System.out.println("Correct guess!");
+            }
+            System.out.println("------------------------------------");
+        }
+
+        if (!String.valueOf(guessedWord).contains("_")) {
+            System.out.println("Congratulations! You guessed the country: " + country);
+            System.out.println("You WIN! 🎉");
+        } else {
+            System.out.println("Game Over! You ran out of guesses.");
+            System.out.println("The country was: " + country);
+            drawHangman(incorrectGuesses);
+            System.out.println("You LOSE! 💀");
+        }
+    }
+}
